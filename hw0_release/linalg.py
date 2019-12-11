@@ -1,4 +1,5 @@
 import numpy as np
+from numpy import linalg
 
 
 def dot_product(a, b):
@@ -15,9 +16,16 @@ def dot_product(a, b):
         out: numpy array of shape (x, x) (scalar if x = 1)
     """
     out = None
-    ### YOUR CODE HERE
-    pass
-    ### END YOUR CODE
+    # if np.isscalar(a) and np.isscalar(b):
+    #     return a*b
+    # if a.shape[1] != b.shape[0]:
+    #     raise ValueError("Dimension of a doesn't match b's.")
+    # out = np.zeros((a.shape[0],b.shape[1]))
+    # for i,a_row in enumerate(a):
+    #     for j,b_cols in enumerate(b.T):
+    #         for k in range(a.shape[1]):
+    #             out[i][j] += a_row[k] * b_cols[k]
+    out =np.dot(a,b)
     return out
 
 
@@ -37,8 +45,9 @@ def complicated_matrix_function(M, a, b):
     """
     out = None
     ### YOUR CODE HERE
-    pass
+    out = dot_product(dot_product(M,a.T),dot_product(a,b))
     ### END YOUR CODE
+
 
     return out
 
@@ -61,7 +70,7 @@ def svd(M):
     s = None
     v = None
     ### YOUR CODE HERE
-    pass
+    linalg.svd()
     ### END YOUR CODE
 
     return u, s, v
