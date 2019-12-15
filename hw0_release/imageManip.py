@@ -20,7 +20,7 @@ def load(image_path):
 
     ### YOUR CODE HERE
     # Use skimage io.imread
-    pass
+    out = io.imread(image_path,as_gray=False)
     ### END YOUR CODE
 
     # Let's convert the image to be between the correct range.
@@ -45,7 +45,7 @@ def dim_image(image):
     out = None
 
     ### YOUR CODE HERE
-    pass
+    out = 0.5 * np.power(image,2)
     ### END YOUR CODE
 
     return out
@@ -66,7 +66,7 @@ def convert_to_grey_scale(image):
     out = None
 
     ### YOUR CODE HERE
-    pass
+    out = color.rgb2gray(image)
     ### END YOUR CODE
 
     return out
@@ -86,7 +86,8 @@ def rgb_exclusion(image, channel):
     out = None
 
     ### YOUR CODE HERE
-    pass
+    gain = [0,1,1] if channel=='R' else [1,0,1] if channel=='G' else [1,1,0]
+    out = image * np.array(gain)
     ### END YOUR CODE
 
     return out
@@ -107,7 +108,8 @@ def lab_decomposition(image, channel):
     out = None
 
     ### YOUR CODE HERE
-    pass
+    index = 1 if channel=='L' else 1 if channel=='A' else 2
+    out = lab[:,:,index]
     ### END YOUR CODE
 
     return out
@@ -128,7 +130,8 @@ def hsv_decomposition(image, channel='H'):
     out = None
 
     ### YOUR CODE HERE
-    pass
+    index = 1 if channel == 'H' else 1 if channel == 'S' else 2
+    out = hsv[:, :, index]
     ### END YOUR CODE
 
     return out
@@ -154,7 +157,11 @@ def mix_images(image1, image2, channel1, channel2):
 
     out = None
     ### YOUR CODE HERE
-    pass
+    out = np.zeros_like(image1)
+    image1 = rgb_exclusion(image1,channel1)
+    image2 = rgb_exclusion(image2,channel2)
+    out[:, :int(image1.shape[1] / 2), :] = image1[:, :int(image1.shape[1] / 2), :]
+    out[:, int(image1.shape[1] / 2):, :] = image2[:, int(image2.shape[1] / 2):, :]
     ### END YOUR CODE
 
     return out
@@ -183,7 +190,23 @@ def mix_quadrants(image):
     out = None
 
     ### YOUR CODE HERE
-    pass
+    half_width = int(image.shape[1] / 2)
+    half_height = int(image.shape[0] / 2)
+    image_topleft = image[:half_height,:half_width,:]
+    image_topright = image[:half_height,half_width:,:]
+    image_bottomleft = image[half_height:,:half_width,:]
+    image_bottomright = image[half_height:,half_width:,:]
+
+    image_topleft = rgb_exclusion(image_topleft, 'R')
+    image_topright = dim_image(image_topright)
+    image_bottomleft = np.power(image_bottomleft,0.5)
+    image_bottomright = rgb_exclusion(image_bottomright,'R')
+
+    out = np.zeros_like(image)
+    out[:half_height,:half_width,:] = image_topleft
+    out[:half_height,half_width:,:] = image_topright
+    out[half_height:,:half_width,:] = image_bottomleft
+    out[half_height:,half_width:,:] = image_bottomright
     ### END YOUR CODE
 
     return out
