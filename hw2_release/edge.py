@@ -316,7 +316,11 @@ def canny(img, kernel_size=5, sigma=1.4, high=20, low=15):
         edge: numpy array of shape(H, W).
     """
     # YOUR CODE HERE
-    pass
+    img = conv(img, gaussian_kernel(kernel_size, sigma))
+    G, theta = gradient(img)
+    G = non_maximum_suppression(G, theta)
+    strong_edges, weak_edges = double_thresholding(G, high, low)
+    edge = link_edges(strong_edges, weak_edges)
     # END YOUR CODE
 
     return edge
